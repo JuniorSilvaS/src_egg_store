@@ -1,0 +1,42 @@
+i need get the datas from the request and make a lot that in this loop i can put the returns of the api in a array .
+like it 
+datas from request : 
+{
+    "products": [
+        {
+            "currency": "brl",
+            "unit_amount": 10,
+            "product_name": "placa de ovos de galinha caipira",
+            "quantity": 1
+        },
+        {
+            "currency": "brl",
+            "unit_amount": 10,
+            "product_name": "placa de ovos de galinha caipira",
+            "quantity": 1
+        }
+        
+    ]
+}
+make a request in the api : 
+first => {
+  currency: 'usd',
+  unit_amount: 1000,
+  recurring: {
+    interval: 'month',
+  },
+  product_data: {
+    name: 'Gold Plan',
+  },
+},
+second => {
+  currency: 'usd',
+  unit_amount: 1000,
+  recurring: {
+    interval: 'month',
+  },
+  product_data: {
+    name: 'Gold Plan',
+  },
+}
+armazen the request from the api in the array.

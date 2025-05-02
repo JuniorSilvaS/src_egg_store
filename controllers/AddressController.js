@@ -2,8 +2,8 @@ const Address = require('./../services/Address');
 
 module.exports = {
     create: async (req, res) => {
+        //take the params of the body
         const { addressLine, city, state, postalCode, country, userId } = req.body;
-
         try {
             const address = new Address(addressLine, city, state, postalCode, country, userId); // pass the correct params
             const response = await address.save();
