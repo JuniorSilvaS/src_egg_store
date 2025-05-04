@@ -11,9 +11,14 @@ module.exports = {
 
             const response = await payment.createPaymentLink();
             res.status(200).json({ response });
-        }catch(err) {
+        } catch (err) {
             //log the error if exists any error.
-            console.log(err);
+            
+            res.status(404).json({ error : err.message });
         };
+    },
+    webhook: async function(req, res) {
+        const response = Payment.webhook(req, res);
+        return res.status(200).json({msg : 'hello world'});
     }
 };
