@@ -26,6 +26,7 @@ class Payment {
 
     async createPaymentLink() {
         let line_items = [];
+        let productsId = [];
         await Promise.all(
             this.products.map(
                 async (product, index) => {
@@ -51,24 +52,20 @@ class Payment {
                             quantity: product.quantity
                         }
                     );
+                    productsId.push(product.product_id);
+                    console.log(productsId);
                 }
             )
         );
-        console.log(line_items);
+        
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ['card'],
             line_items: line_items,
-            //[{
-            //     price_data: {
-            //         currency: 'brl',
-            //         unit_amount: 20000,
-            //         product_data: { name: "test 111" },
-            //     },
-            //     quantity: 2,
-            // }],
+            metadata: {
+                productsId: JSON.stringify(productsId)
+            },
             mode: 'payment',
             success_url: `http://example.com`,
-            
         });
         return session;
     };
@@ -90,19 +87,32 @@ class Payment {
 
         // Handle the event
         switch (event.type) {
-            case 'payment_intent.succeeded':
-                const paymentIntent = event.data.object;
-                console.log(paymentIntent);
+            case 'checkout.session.completed':
+                const session = event.data.object;
+                const productsId  = session.metadata.productsId;
+                console.log(productsId);
+                try {
+                    const purchase = await axios.post('http://localhost:4000/api/purchases/create', {
+                        userId : 1,
+                        productId: JSON.parse(productsId[0]),
+                        addressId: 1,
+                        quantity: 1
+                    });
+                    console.log(purchase);
+                }catch(e) {
+                    console.log(e.message);
+                }
                 break;
+
             case 'payment_method.attached':
                 const paymentMethod = event.data.object;
-                // Then define and call a method to handle the successful attachment of a PaymentMethod.
-                // handlePaymentMethodAttached(paymentMethod);
+                // handle it
                 break;
-            // ... handle other event types
+
             default:
                 console.log(`Unhandled event type ${event.type}`);
         }
+
 
         // Return a response to acknowledge receipt of the event
 
