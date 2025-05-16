@@ -9,7 +9,7 @@ module.exports = {
             const payment = new Payment(products);
             // take the response and return then.
 
-            const response = await payment.createPaymentLink();
+            const response = await payment.createPaymentLink(req, res);
             res.status(200).json({ response });
         } catch (err) {
             //log the error if exists any error.

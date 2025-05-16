@@ -111,14 +111,14 @@ class User {
         const saltRounds = 10;
         const hashedPassword = await bcrypt.hash(this.password, saltRounds);
         try {
-            await prisma.user.create({
+            const response = await prisma.user.create({
                 data: {
                     name: this.name,
                     email: this.email,
                     password: hashedPassword
                 }
             });
-
+            console.log(response)
             return { message: "User created successfully" }
         } catch (err) {
             if (err instanceof PrismaClientKnownRequestError && err.code === 'P2002') {

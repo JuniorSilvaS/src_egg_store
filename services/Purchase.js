@@ -2,29 +2,41 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 class Purchase {
-  constructor({ userId, productId, quantity, addressId }) {
+  constructor({ userId, addressId, items }) {
     this.userId = userId;
-    this.productId = productId;
-    this.quantity = quantity;
     this.addressId = addressId;
+    this.items = items;
+    // this.quantity = quantity;
+    // this.addressId = addressId;
   }
 
   // Create a new purchase
   async save() {
-    if (!this.userId || !this.productId || !this.quantity || !this.addressId) {
+    if (!this.userId || !this.addressId || !this.items) {
       throw new Error('Missing required fields for purchase');
     }
 
     try {
-      const purchase = await prisma.purchase.create({
+      const newPurchase = await prisma.purchase.create({
         data: {
           userId: this.userId,
-          productId: this.productId,
-          quantity: this.quantity,
           addressId: this.addressId,
+          total: this.total,
+          items: {
+            create: this.items.map(item => ({
+              productId: item.productId,
+              quantity: item.quantity,
+              price: item.price,
+            })),
+          },
+        },
+        include: {
+          items: true,
         },
       });
-      return purchase;
+
+      return newPurchase;
+
     } catch (error) {
       throw new Error('Failed to create purchase: ' + error.message);
     }

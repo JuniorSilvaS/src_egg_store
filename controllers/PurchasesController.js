@@ -2,10 +2,10 @@ const Purchase = require('../services/Purchase');
 
 module.exports = {
   create: async (req, res) => {
-    const { userId, productId, quantity, addressId } = req.body;
+    const { userId, items, addressId } = req.body;
 
     try {
-      const purchase = new Purchase({userId, productId, quantity, addressId});
+      const purchase = new Purchase({ userId, addressId, items });
       const response = await purchase.save();
       res.status(201).json({ message: 'Purchase created successfully', purchase: response });
     } catch (err) {

@@ -19,43 +19,49 @@ model User {
   email     String      @unique
   password  String
 
-  addresses Address[]   // 👈 user can have many addresses
-  purchases Purchase[]  // 👈 user can make many purchases
+  addresses Address[]   // user can have many addresses
+  purchases Purchase[]  // user can make many purchases
 }
 
 model Address {
   id          Int       @id @default(autoincrement())
   userId      Int
-  user        User      @relation(fields: [userId], references: [id])
-
   addressLine String
   city        String
   state       String
   postalCode  String
   country     String
 
-  purchases   Purchase[]  // 👈 add this line!
+  user        User      @relation(fields: [userId], references: [id])
+  purchases   Purchase[]
 }
 
-
 model Product {
-  id        Int         @id @default(autoincrement())
-  name      String
-  price     Float
-  quantity  Int
+  id            Int             @id @default(autoincrement())
+  name          String
+  price         Float
+  quantity      Int
 
-  purchases Purchase[]
+  purchaseItems PurchaseItem[]
 }
 
 model Purchase {
-  id         Int       @id @default(autoincrement())
+  id         Int             @id @default(autoincrement())
   userId     Int
-  productId  Int
   addressId  Int
-  quantity   Int
-  createdAt  DateTime  @default(now())
+  createdAt  DateTime        @default(now())
 
-  user       User      @relation(fields: [userId], references: [id])
+  user       User            @relation(fields: [userId], references: [id])
+  address    Address         @relation(fields: [addressId], references: [id])
+  items      PurchaseItem[]  
+}
+
+model PurchaseItem {
+  id         Int       @id @default(autoincrement())
+  purchaseId Int
+  productId  Int
+  quantity   Int
+  price      Float
+  purchase   Purchase  @relation(fields: [purchaseId], references: [id])
   product    Product   @relation(fields: [productId], references: [id])
-  address    Address   @relation(fields: [addressId], references: [id])
 }
